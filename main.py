@@ -1,14 +1,30 @@
 from typing import Optional
+from dotenv import load_dotenv
+import psycopg2
+import os
 
 from fastapi import FastAPI
+
+load_dotenv()
+DB_HOST = os.getenv("DB_HOST")
+DB_USER = os.getenv("DB_USER")
+DB_PASS= os.getenv("DB_PASS")
 
 app = FastAPI()
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+def query_db(query):
+    conn = psycopg2.connect(
+            host=DB_HOST,
+            user=DB_USER,
+            password=DB_PASS,
+        )
+    with conn:
+        with conn.cursor() as cur:
+            cur.execute(query)
+            results = cur.fetchall()
+    return results
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+@app.get("/rivers")
+def get_rivers():
+    return query_db('SELECT * FROM rivers')
