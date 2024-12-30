@@ -1,9 +1,11 @@
 from dotenv import load_dotenv
 from datetime import datetime
 from psycopg2.pool import SimpleConnectionPool
+from fastapi import FastAPI, HTTPException
 import os
 
-from fastapi import FastAPI, HTTPException
+from utils import *
+
 
 load_dotenv()
 
@@ -30,16 +32,23 @@ def query_db(query, params=None):
         pool.putconn(conn)
 
 
+def rows_to_json(rows, columns):
+    return [{col: row[idx] for idx, col in enumerate(columns)} for row in rows]
+
+
 @app.get("/rivers")
 def get_rivers():
-    rows = query_db("SELECT * FROM rivers")
-    return [{"id": row[0], "name": row[1]} for row in rows]
+    rows = query_db(f"SELECT {', '.join(RIVERS_OUT_COLS)} FROM rivers")
+    return rows_to_json(rows, RIVERS_OUT_COLS)
 
 
 @app.get("/devices_in_river/{river_id}")
 def get_devices_in_river(river_id: int):
-    rows = query_db(f"SELECT device_id FROM devices WHERE river_id = %s", (river_id,))
-    return [{"device_id": row[0]} for row in rows]
+    rows = query_db(
+        f"SELECT {', '.join(DEVICES_OUT_COLS)} FROM devices WHERE river_id = %s",
+        (river_id,),
+    )
+    return rows_to_json(rows, DEVICES_OUT_COLS)
 
 
 @app.get("/device_readings/{river_id}_{device_id}")
@@ -50,16 +59,15 @@ def get_device_readings(
     start: datetime | None = None,
     end: datetime | None = None,
 ):
-    sensor_columns = ["water_level", "tds", "turbidity", "ph", "temperature"]
     if column:
-        if column not in sensor_columns:
+        if column not in SENSOR_COLUMNS:
             raise HTTPException(
                 status_code=400,
-                detail=f"Invalid column. Choose one of {sensor_columns}",
+                detail=f"Invalid column. Choose one of {SENSOR_COLUMNS}",
             )
         select_columns = ["recorded_at", column]
     else:
-        select_columns = ["recorded_at", *sensor_columns]
+        select_columns = ["recorded_at", *SENSOR_COLUMNS]
     query = f"SELECT {', '.join(select_columns)} FROM device_measurements WHERE river_id = %s AND device_id = %s"
     params = (river_id, device_id)
     if start:
@@ -69,4 +77,4 @@ def get_device_readings(
         query += " AND recorded_at <= %s"
         params += (end,)
     rows = query_db(query, params)
-    return [{col: row[idx] for idx, col in enumerate(select_columns)} for row in rows]
+    return rows_to_json(rows, select_columns)
