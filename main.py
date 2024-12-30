@@ -63,10 +63,10 @@ def get_device_readings(
     query = f"SELECT {', '.join(select_columns)} FROM device_measurements WHERE river_id = %s AND device_id = %s"
     params = (river_id, device_id)
     if start:
-        query += " AND recorded_at > %s"
+        query += " AND recorded_at >= %s"
         params += (start,)
     if end:
-        query += " AND recorded_at < %s"
+        query += " AND recorded_at <= %s"
         params += (end,)
     rows = query_db(query, params)
     return [{col: row[idx] for idx, col in enumerate(select_columns)} for row in rows]
