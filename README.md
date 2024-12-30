@@ -85,10 +85,10 @@ Fetch sensor readings from a specific device in a river. You can filter by senso
   If not specified, the response will include all available sensor data (water level, TDS, turbidity, pH, temperature).
 
 - **`start`**:  
-  Filter readings starting from this date and time. Must be in ISO 8601 format (`YYYY-MM-DDTHH:MM:SS`).
+  Filter readings starting from this date and time.
 
 - **`end`**:  
-  Filter readings until this date and time. Must be in ISO 8601 format (`YYYY-MM-DDTHH:MM:SS`).
+  Filter readings until this date and time.
 
 **Request without filters**:
 ```http
