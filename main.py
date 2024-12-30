@@ -42,15 +42,15 @@ def get_devices_in_river(river_id: int):
 
 @app.get("/device_readings/{river_id}_{device_id}")
 def get_device_readings(river_id: int, device_id: int):
-    rows = query_db(f"SELECT * FROM river_{river_id}_device_{device_id}")
+    rows = query_db(f"SELECT * FROM device_measurements WHERE river_id = {river_id} and device_id = {device_id}")
     return [
         {
-            "timestamp": row[0],
-            "water_level": row[1],
-            "tds": row[2],
-            "turbidity": row[3],
-            "ph": row[4],
-            "temperature": row[5],
+            "timestamp": row[2],
+            "water_level": row[3],
+            "tds": row[4],
+            "turbidity": row[5],
+            "ph": row[6],
+            "temperature": row[7],
         }
         for row in rows
     ]
