@@ -1,32 +1,33 @@
-from typing import Optional
 from dotenv import load_dotenv
 from datetime import datetime
-import psycopg2
+from psycopg2.pool import SimpleConnectionPool
 import os
 
 from fastapi import FastAPI, HTTPException
 
 load_dotenv()
-DB_HOST = os.getenv("DB_HOST")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASS = os.getenv("DB_PASS")
 
 app = FastAPI()
 
+pool = SimpleConnectionPool(
+    minconn=1,
+    maxconn=10,
+    host=os.getenv("DB_HOST"),
+    dbname=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASS"),
+)
+
 
 def query_db(query, params=None):
-    conn = psycopg2.connect(
-        host=DB_HOST,
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASS,
-    )
-    with conn:
+    conn = pool.getconn()
+    try:
         with conn.cursor() as cur:
             cur.execute(query, params)
             rows = cur.fetchall()
-    return rows
+        return rows
+    finally:
+        pool.putconn(conn)
 
 
 @app.get("/rivers")
@@ -47,7 +48,7 @@ def get_device_readings(
     device_id: int,
     column: str | None = None,
     start: datetime | None = None,
-    end: datetime | None = None
+    end: datetime | None = None,
 ):
     sensor_columns = ["water_level", "tds", "turbidity", "ph", "temperature"]
     if column:
