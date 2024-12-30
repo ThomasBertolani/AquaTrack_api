@@ -51,10 +51,16 @@ GET /devices_in_river/1
 ```json
 [
   {
-    "device_id": 1
+    "device_id": 1,
+    "name": "Device A",
+    "latitude": 45.077389,
+    "longitude": 9.883139
   },
   {
-    "device_id": 2
+    "device_id": 2,
+    "name": "Device B",
+    "latitude": 44.895639,
+    "longitude": 11.638806
   }
 ]
 ```
@@ -93,7 +99,7 @@ GET /device_readings/1_1
 [
   {
     "recorded_at": "2024-12-23T12:00:00",
-    "water_level": 5.1,
+    "water_level": 120,
     "tds": 395,
     "turbidity": 11,
     "ph": 7.3,
@@ -101,7 +107,7 @@ GET /device_readings/1_1
   },
   {
     "recorded_at": "2024-12-24T12:00:00",
-    "water_level": 5.3,
+    "water_level": 114,
     "tds": 400,
     "turbidity": 12,
     "ph": 7.4,
@@ -109,7 +115,7 @@ GET /device_readings/1_1
   },
   {
     "recorded_at": "2024-12-25T12:00:00",
-    "water_level": 5.5,
+    "water_level": 116,
     "tds": 410,
     "turbidity": 13,
     "ph": 7.5,
@@ -117,7 +123,7 @@ GET /device_readings/1_1
   },
   {
     "recorded_at": "2024-12-26T12:00:00",
-    "water_level": 5.6,
+    "water_level": 118,
     "tds": 420,
     "turbidity": 14,
     "ph": 7.6,
