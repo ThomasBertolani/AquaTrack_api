@@ -70,12 +70,12 @@ GET /devices_in_river/1
 **Endpoint**: `/device_readings/{river_id}_{device_id}`  
 **Method**: `GET`
 
-Fetch sensor readings from a specific device in a river. You can filter by sensor column and date range.
+Fetch sensor readings from a specific device in a river. You can filter by sensor and date range.
 
 #### Optional Query Parameters:
 
-- **`column`**:  
-  Specify a specific sensor column to retrieve. Choose from the following:
+- **`sensor`**:  
+  Specify a specific sensor to retrieve. Choose from the following:
   - `water_level`
   - `tds` (Total Dissolved Solids)
   - `turbidity`
@@ -134,7 +134,7 @@ GET /device_readings/1_1
 
 **Request with filters**:
 ```http
-GET /device_readings/1_1?column=temperature&start=2024-12-24T00:00:00&end=2024-12-26T00:00:00
+GET /device_readings/1_1?sensor=temperature&start=2024-12-24T00:00:00&end=2024-12-26T00:00:00
 ```
 **Response**:
 ```json

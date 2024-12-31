@@ -55,17 +55,17 @@ def get_devices_in_river(river_id: int):
 def get_device_readings(
     river_id: int,
     device_id: int,
-    column: str | None = None,
+    sensor: str | None = None,
     start: datetime | None = None,
     end: datetime | None = None,
 ):
-    if column:
-        if column not in SENSOR_COLUMNS:
+    if sensor:
+        if sensor not in SENSOR_COLUMNS:
             raise HTTPException(
                 status_code=400,
-                detail=f"Invalid column. Choose one of {SENSOR_COLUMNS}",
+                detail=f"Invalid sensor. Choose one of {SENSOR_COLUMNS}",
             )
-        select_columns = ["recorded_at", column]
+        select_columns = ["recorded_at", sensor]
     else:
         select_columns = ["recorded_at", *SENSOR_COLUMNS]
     query = f"SELECT {', '.join(select_columns)} FROM device_measurements WHERE river_id = %s AND device_id = %s"
