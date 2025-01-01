@@ -1,15 +1,22 @@
-from dotenv import load_dotenv
-from datetime import datetime
-from psycopg2.pool import SimpleConnectionPool
-from fastapi import FastAPI, HTTPException
 import os
+from datetime import datetime
+
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from psycopg2.pool import SimpleConnectionPool
 
 from utils import *
-
 
 load_dotenv()
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_headers=["*"],
+)
 
 pool = SimpleConnectionPool(
     minconn=1,
